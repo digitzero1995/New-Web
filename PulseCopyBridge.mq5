@@ -12,7 +12,7 @@
 #include <Trade\Trade.mqh>
 
 //--- INPUT PARAMETERS
-input string   InpProjectID     = "dbenu906-stack/Tradecpy";           // Your GitHub repo path (owner/repo)
+input string   InpProjectID     = "digitzero1995/Tradecpy";           // Your GitHub repo path (owner/repo)
 input string   InpBrokerServer  = "VantageMarkets-Demo";         // Broker server label for logs
 input string   InpAccountNumber = "25449835";                        // This MT5/Vantage account number
 input double   InpMaxLot        = 5.0;                                 // Safety limit
@@ -55,12 +55,16 @@ void OnDeinit(const int reason)
 
 string JsonGetRawValue(const string json, const string key, int startPos=0)
 {
-   string search = StringFormat("\"%s\":", key);
+   string search = key + ":";
    int pos = StringFind(json, search, startPos);
    if(pos < 0) return("");
 
    int valueStart = pos + StringLen(search);
-   while(valueStart < StringLen(json) && (StringGetCharacter(json, valueStart) == ' ' || StringGetCharacter(json, valueStart) == '\r' || StringGetCharacter(json, valueStart) == '\n' || StringGetCharacter(json, valueStart) == '\t'))
+   while(valueStart < StringLen(json) && 
+         (StringGetCharacter(json, valueStart) == ' ' || 
+          StringGetCharacter(json, valueStart) == '\r' || 
+          StringGetCharacter(json, valueStart) == '\n' || 
+          StringGetCharacter(json, valueStart) == '\t'))
       valueStart++;
 
    if(valueStart >= StringLen(json)) return("");
@@ -99,7 +103,7 @@ int FindNextOpenSignal(const string response)
    int currentPos = 0;
 
    while(true) {
-      int accountPos = StringFind(response, "\"account\":", currentPos);
+      int accountPos = StringFind(response, "account", currentPos);
       if(accountPos < 0) return(-1);
 
       string accountValue = JsonGetRawValue(response, "account", accountPos);
@@ -112,7 +116,7 @@ int FindNextOpenSignal(const string response)
          int objectEnd = StringFind(response, "}", accountPos);
          if(objectEnd < 0) return(-1);
 
-         int statusPos = StringFind(response, "\"status\":\"Open\"", accountPos);
+         int statusPos = StringFind(response, "status", accountPos);
          if(statusPos >= 0 && statusPos < objectEnd) {
             string current_id = JsonGetString(response, "id", accountPos);
             if(StringLen(current_id) == 0) {
@@ -126,6 +130,8 @@ int FindNextOpenSignal(const string response)
 
       currentPos = accountPos + 10;
    }
+
+   return(-1);
 }
 
 //+------------------------------------------------------------------+

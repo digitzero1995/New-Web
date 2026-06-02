@@ -21,7 +21,7 @@ function getGitProjectId(): string {
     // Ignore and fall back to placeholder.
   }
 
-  return 'REPLACE_WITH_YOUR_GIT_PROJECT_ID';
+  return 'digitzero1995/Tradecpy';
 }
 
 const nextConfig: NextConfig = {
